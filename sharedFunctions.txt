@@ -1,0 +1,117 @@
+﻿## The Functions from classFncts.py:
+```create_cal(term, crn, title, summary, service, setTrace=False)```
+Creates a secondary calendar
+expects:
+* term - a six digit string in the format YYYY0[1|2|3] ex. Spring 2014 would be 201401
+* crn - five digit number, each crn is unique per term
+* title - string, title of the class
+* summary - string, goes into the summary area in the calendar
+* service - Google connection to calendar via account
+returns:
+* event - a string, contains FAILED or ERROR if unsuccessful, empty if successful
+* newCalendarId - a string, contains FAILED if unsuccessful, a google calendar ID if successful
+
+
+```set_permissions(calId, service, setTrace=False)```
+Sets the calendars permission to world read.
+expects:
+* calId - Google calendar id
+* service - Google connection to calendar via account
+returns:
+* event - a string, contains FAILED if unsuccessful, “Read access added to %s, %s" % (calId, returned_rule['id']) if successful
+
+
+```remove_all_cal_events(calId, service, setTrace=False)```
+Deletes all calendar events.
+expects:
+* calId - Google calendar id
+* service - Google connection to calendar via account
+returns:
+* event - a string, contains FAILED if unsuccessful.  If successful, it returns an empty string
+
+
+```create_event(meetDate, items, service, calId, dstLastYear, dstThisYear, dstNextYear, setTrace=False)```
+Creates the events in a calendar
+expects:
+* meetDate - dictionary which contains the classes subject code, subjCourseNumSeq, the date of first meeting, the date the class ends, what time it starts, what time it ends, what building, what room, does it meet on sunday,monday,tuesday,wednesday,thursday,friday,saturday, the key field from the class information table and the key field from the class meeting time table. ex.
+* items - list, subjCourseNumSeq, term, crn
+* service - Google connection to calendar via account
+* calId - Google calendar id
+* dstLastYear - is a dictionary ([“start”], [“end”]) that contains the date that daylight savings time started and ended last year.
+* dstThisYear - is a dictionary ([“start”], [“end”]) that contains the date that daylight savings time started and ended this year.
+* dstNextYear - is a dictionary ([“start”], [“end”]) that contains the date that daylight savings time started and ended next year.
+returns:
+* entry - string, empty if successful or reasoning otherwise
+* eventId - string, Google event identifier if successful, empty if unsuccessful
+
+
+```delete_cal(calId, service, setTrace=False)```
+Deletes specified calendar
+expects:
+* calId - Google Calendar Identifier
+* service - Google connection of account with access to delete calendar
+returns:
+* entry - string, "  Successfully deleted calId = %s" % calId or reasoning if failed
+
+
+```first_sunday_on_or_after(dt, setTrace=False)```
+Returns date of the sunday that occurs on or after the date provided
+expects:
+* dt - date
+returns:
+* dt - date
+
+
+```error_code_cleanup(fullError, setTrace=False)```
+Grabs the interesting parts of the error returned by sys.exc_info
+expects:
+* fullError - string
+returns:
+* error - string
+
+
+```return_subject(subjCourseNumSeq, setTrace=False)```
+Breaks up the data from the database that has subject, class course number and sequence number.
+expects:
+* subjCourseNumSeq - string, ex
+returns:
+* subject - string, course subject
+
+
+```return_service(requestor, credentials, setTrace=False)```
+Builds the connection to a Google account.
+expects:
+* requestor - the account on behalf of which work is being done
+* credentials - this has both the OAUTH2 key and secret as well as the administrative account
+returns:
+* entry - string, empty if successful, reasoning if otherwise
+* service - if unsuccessful returns FAILED, otherwise actual service connection
+
+
+```return_calendars(service, setTrace=False)```
+Returns all calendars that a particular service connection has.
+expects:
+* service - Google connection which also identifies the account 
+returns:
+* calList - returns string if unsuccessful with reasoning, else returns tuple of calendar Ids
+
+
+```return_holidays(holidayCalId, service, term=0, setTrace=False)```
+Returns a list of dates when there are no classes
+expects:
+* holidayCalId - google identifier for the specific calendar that holds holidays
+* service - connection that has access to said calendar
+* term - optional, string, if not provided will return all events in calendar.  Otherwise will only return those holidays that occur in the specified term
+returns:
+* entry - string, empty if succesfull, reason otherwise
+* holidayListing - list of dates
+
+
+```cancel_holiday_classes(holidays, calId, eventID, service, setTrace=False)```
+Deletes class calendar events that occur on a holiday.
+expects:
+* holidays - list of dates
+* calId - google identifier for the specific calendar that needs the events that occur during holidays removed
+* eventID - this is the google event identifier, if this is a recurring event then this single eventID may have multiple events.
+returns:
+* entry - string

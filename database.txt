@@ -1,0 +1,81 @@
+﻿Planning Calendar and Class Calendar code share the same database.  Additionally, some of the same tables are referenced as well.  Class Calendars updates the classCalendars table and Planning Calendar updates the calendar table.
+
+
+MySQL database setup:
+ssr2fcx_courses
+term, mediumint(9)
+campusCode, varchar(3)
+crn, mediumint(9)
+subjectCode, varchar(20)
+subjectDesc, text
+courseNum, varchar(10)
+sequenceNum, varchar(10)
+subjCourseNum, varchar(500)
+courseTitle, text
+instructorID, varchar(10)
+instructorUsername, text
+courseDesc, text
+courseStartDate, date
+courseEndDate, date
+url, varchar(200)
+id, bigint(20), primary key
+
+
+meetOld
+term, mediumint(9)
+crn, mediumint(9)
+subjCourseNumSeq, text
+meetStartDate, date
+meetEndDate, date
+startTime, varchar(10)
+endTime, varchar(10)
+bldg, varchar(10)
+rm, varchar(10)
+sunday, char(1
+monday, char(1)
+tuesday, char(1)
+wednesday, char(1)
+thursday, char(1)
+friday, char(1)
+saturday, char(1)
+id, bigint(20), primary key
+
+
+ssr2fcx_meeting
+term, mediumint(9)
+crn, mediumint(9)
+subjCourseNumSeq, text
+meetStartDate, date
+meetEndDate, date
+startTime, varchar(10)
+endTime, varchar(10)
+bldg, varchar(10) 
+rm, varchar(10)
+sunday, char(1)
+monday, char(1)
+tuesday, char(1)
+wednesday, char(1)
+thursday, char(1)
+friday, char(1)
+saturday, char(1)
+id, bigint(20), primary key
+
+
+calendar
+crn, mediumint(9)
+viewURL, text
+subscribeURL, text
+term, mediumint(9)
+sched_id, bigint(20)
+calId, text, 
+subj, varchar(25)
+owner, varchar(100)
+id, bigint(20), primary key
+
+
+classCalendars
+id, int(11), primary key
+term, mediumint(9)
+CRN, mediumint(9)
+calId, text
+ownerUsername, varchar(200)
