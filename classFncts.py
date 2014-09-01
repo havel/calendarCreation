@@ -9,8 +9,6 @@ from apiclient.discovery import build
 from apiclient.oauth import TwoLeggedOAuthCredentials
 from apiclient.errors import HttpError
 
-SLEEPY = 0
-
 ###############################
 # Create a secondary calendar #
 ###############################
@@ -49,13 +47,13 @@ def create_cal(term, crn, title, summary, service, setTrace=False):
         else:
           entry = "  FAILED: LIMIT REACHED"
 
-          returnMe = "FAILED - SLEEPY = %d, i = %d\n" % (SLEEPY, i)
+          returnMe = "FAILED - i = %d\n" % (i) 
 
           return (entry, returnMe)
       elif ("Forbidden" in errorCode):
         entry = "  FAILED: FORBIDDEN"
 
-        returnMe = "FAILED: FORBIDDEN - SLEEPY = %d, i = %d\n" % (SLEEPY, i)
+        returnMe = "FAILED: FORBIDDEN - i = %d\n" % (i)
 
         return (entry, returnMe) 
       entry = "%s | %s" % (entry, errorCode) 
@@ -506,6 +504,7 @@ def error_code_cleanup(fullError, setTrace=False):
     pdb.set_trace()
 
   errorStr = "%s" % (fullError)
+
 
   quote = errorStr.find('\"') + 1
   error = errorStr[quote:]

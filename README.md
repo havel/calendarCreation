@@ -27,10 +27,10 @@ In bbCal.py I use process for multiprocessing, but because of Google limits the 
 
 
 ## Requirements:
-httplib2-0.7.2
-argparse-1.2.1
-google-api-python-client-1.0beta7
-MySQLdb 1.2.3c1
+* httplib2-0.7.2
+* argparse-1.2.1
+* google-api-python-client-1.0beta7
+* MySQLdb 1.2.3c1
 
 
 The database table expectations are located in the database.txt file.
@@ -48,11 +48,11 @@ The University of Alaska Fairbanks academic unit automatically creates class cal
 
 
 ## Requirements:
-httplib2-0.7.2
-argparse-1.2.1
-google-api-python-client-1.0beta7
-MySQLdb 1.2.3c1
-multiprocessing '0.70a1
+* httplib2-0.7.2
+* argparse-1.2.1
+* google-api-python-client-1.0beta7
+* MySQLdb 1.2.3c1
+* multiprocessing '0.70a1
 
 
 The database table expectations are located in the database.txt file.

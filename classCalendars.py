@@ -20,10 +20,10 @@ import apiclient
 SLEEPY = 40
 
 OAUTH_CONSUMER_KEY = <YOUR CONSUMER KEY>
-OAUTH_CONSUMER_SECRET = <YOUR CONSUMER SECRET> 
+OAUTH_CONSUMER_SECRET = <YOUR CONSUMER SECRET>
 
-OAUTH_CONSUMER_KEY_TEST = <YOUR TEST CONSUMER KEY> 
-OAUTH_CONSUMER_SECRET_TEST = <YOUR TEST CONSUMER SECRET> 
+OAUTH_CONSUMER_KEY_TEST = <YOUR TEST CONSUMER KEY>
+OAUTH_CONSUMER_SECRET_TEST = <YOUR TEST CONSUMER SECRET>
 
 ######################################
 #                                    #
@@ -60,9 +60,9 @@ def create_these_cals(db, credentials, instructorUserList, thisTerm, domain, cal
   for instructorUsername in instructorUserList:
     if setTrace: pdb.set_trace()
 
-    query = """SELECT * FROM ssr2fcx_courses as class, camp_code as cc
-               WHERE class.campusCode = cc.Code AND cc.University='UAF' 
-               AND instructorUsername = "%s" AND term=%s""" % (instructorUsername, thisTerm) 
+    query = """select * from ssr2fcx_courses as class, camp_code as cc
+               where class.campusCode = cc.Code and cc.University='UAF' 
+               and instructorUsername = "%s" and term=%s""" % (instructorUsername, thisTerm) 
     for i in range(0,5):
       try:
         classLines = subClasses.execute(query)
@@ -152,7 +152,7 @@ def create_these_cals(db, credentials, instructorUserList, thisTerm, domain, cal
           calExists[coCrn] = "exists"
 
         # create events
-        query = """SLECTt * FROM ssr2fcx_meeting WHERE term = %s AND crn = %s""" % (thisTerm, coCrn)
+        query = """select * from ssr2fcx_meeting where term = %s AND crn = %s""" % (thisTerm, coCrn)
         for i in range(0,5):
           try:
             meet = subMeetings.execute(query)
@@ -429,9 +429,9 @@ if __name__ == '__main__':
   # Splitting up the work #
   #                       #
   #########################
-  query = """SELECT COUNT(distinct(instructorUsername)) as totalCount FROM ssr2fcx_courses as class, camp_code as cc
-             WHERE term  = %s
-             AND class.campusCode = cc.Code AND cc.University='UAF'""" % (thisTerm)
+  query = """select count(distinct(instructorUsername)) as totalCount from ssr2fcx_courses as class, camp_code as cc
+             where term  = %s
+             and class.campusCode = cc.Code and cc.University='UAF'""" % (thisTerm)
   for i in range(0,5):
     try:
       classesLines = classes.execute(query)
@@ -451,11 +451,11 @@ if __name__ == '__main__':
   instructorCountLeft = instructorCount[0]['totalCount'] - instructorCountHalf
 
   firstHalf=[]
-  query = """SELECT DISTINCT(instructorUsername) as name FROM ssr2fcx_courses as class, camp_code as cc
+  query = """select distinct(instructorUsername) as name from ssr2fcx_courses as class, camp_code as cc
              where term = %s and instructorUsername >'' 
-             AND class.campusCode = cc.Code AND cc.University='UAF'
-             ORDER BY instructorUsername 
-             LIMIT %s""" % (thisTerm, instructorCountHalf)
+             and class.campusCode = cc.Code and cc.University='UAF'
+             order by instructorUsername 
+             limit %s""" % (thisTerm, instructorCountHalf)
 
   for i in range(0,5):
     try:
@@ -477,10 +477,10 @@ if __name__ == '__main__':
     firstHalf.append(nameRow['name'])
 
   secondHalf=[]
-  query = """SELECT DISTINCT(instructorUsername) as name FROM ssr2fcx_courses as class, camp_code as cc
-             WHERE term = %s AND instructorUsername >''
-             AND class.campusCode = cc.Code AND cc.University='UAF'
-             ORDER BY instructorUsername DESC LIMIT %s""" % (thisTerm, instructorCountLeft)
+  query = """select distinct(instructorUsername) as name from ssr2fcx_courses as class, camp_code as cc
+             where term = %s and instructorUsername >''
+             and class.campusCode = cc.Code and cc.University='UAF'
+             order by instructorUsername desc limit %s""" % (thisTerm, instructorCountLeft)
 
   for i in range(0,5):
     try:
@@ -507,7 +507,7 @@ if __name__ == '__main__':
   #                                                     #
   #######################################################
   calExists={}
-  query ="""SELECT * FROM classCalendars WHERE term = %s""" % (thisTerm)
+  query ="""select * from classCalendars where term = %s""" % (thisTerm)
   for i in range(0,5):
     try:
       classesLines = classes.execute(query)
@@ -586,10 +586,10 @@ if __name__ == '__main__':
   #                                                            #
   ##############################################################
   debug = ""
-  query = """SELECT * FROM camp_code as cc, ssr2fcx_courses as sched
-             LEFT OUTER JOIN classCalendars on sched.crn = classCalendars.CRN AND sched.term = classCalendars.term
-             WHERE classCalendars.id is null AND sched.term = %s
-             AND sched.campusCode = cc.Code AND cc.University='UAF' %s""" % (thisTerm, debug)
+  query = """select * from camp_code as cc, ssr2fcx_courses as sched
+             left outer join classCalendars on sched.crn = classCalendars.CRN AND sched.term = classCalendars.term
+             where classCalendars.id is null AND sched.term = %s
+             and sched.campusCode = cc.Code and cc.University='UAF' %s""" % (thisTerm, debug)
 
   for i in range(0,5):
     try:
@@ -642,7 +642,7 @@ if __name__ == '__main__':
       loggfile.write(entry)
 
     # create events
-    query = """SELECT * FROM ssr2fcx_meeting WHERE term = %s AND crn = %s""" % (thisTerm, schedDbRow['crn'])
+    query = """select * from ssr2fcx_meeting where term = %s AND crn = %s""" % (thisTerm, schedDbRow['crn'])
     for i in range(0,5):
       try:
         meet = meetings.execute(query)
@@ -703,7 +703,7 @@ if __name__ == '__main__':
           entry = "  FAILED to remove classes on holidays. %s\n" % entry
           print entry
           loggfile.write(entry)
-          errfile.write(error)
+          errfile.write(entry)
 
     # write db entry
     uQuery = """INSERT into classCalendars SET CRN = '%s', term = '%s', calId = '%s', ownerUsername = '%s'""" % \

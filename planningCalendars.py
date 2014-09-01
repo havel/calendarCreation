@@ -72,7 +72,7 @@ def event_check(entry, adminAcctOwned, thisArray, action, acctCredentials, k):
   if ("INVALID" in entry):
     tempEntry = "  %s, credentials failed for %s" % (errorSegment, acctCredentials)
     if (DEBUG): print tempEntry
-    logfile.write('%r\n' % (tempEntry))
+    logfile.write("%s\n" % (tempEntry))
     if (k not in adminAcctOwned): 
       adminAcctOwned.append(k)
       if (DEBUG): print "  check event - 1 - adminAcctOwned - invalid"
@@ -86,7 +86,7 @@ def event_check(entry, adminAcctOwned, thisArray, action, acctCredentials, k):
   elif ("FORBIDDEN" in entry):
     tempEntry = "  %s, credentials forbidden for %s" % (errorSegment, acctCredentials)
     if (DEBUG): print tempEntry
-    logfile.write('%r\n' % (tempEntry))
+    logfile.write("%s\n" % (tempEntry))
     if (k not in adminAcctOwned):
       adminAcctOwned.append(k)
       if (DEBUG): print "check event - appeneded to adminAcctOwned"
@@ -110,27 +110,27 @@ def event_check(entry, adminAcctOwned, thisArray, action, acctCredentials, k):
   elif ("FAILED" in entry):
     error = "  ERROR: %s FAILED for k = %s" % (errorSegment, k) 
     print error
-    errorfile.write('%r\n' % (error))
+    errorfile.write("%s\n" % (error))
     print entry
-    logfile.write('%r\n' % (entry))
+    logfile.write("%s\n" % (entry))
     if (DEBUG): print "  account info => %s requestor = %s" % (errorSegment, acctCredentials)
     returnValue = "failed"
   elif ("UNEXISTANCE" in entry):
     error = "  ERROR: %s - calendar does not exist k = %s, for acct = %s" % (errorSegment, k, acctCredentials)  
     print error
-    errorfile.write('%r\n' % (error))
+    errorfile.write("%s\n" % (error))
     print entry
-    logfile.write('%r\n' % (entry))
+    logfile.write("%s\n" % (entry))
     returnValue = "failed"
   elif ("color change was unsuccessful" in entry):
     tempEntry = "  %s, calendar created successfully but with standard color for k = %s" % (errorSegment, k)
     print tempEntry
-    logfile.write('%r\n' % (tempEntry))
+    logfile.write("%s\n" % (tempEntry))
     returnValue = "success"
   else:
     entry = "  Success %s for k = %s" % (errorSegment, k) 
     print entry
-    logfile.write('%r\n' % (entry))
+    logfile.write("%s\n" % (entry))
     returnValue = "success"
 
   if (returnValue == "WTF" and DEBUG): pdb.set_trace()
@@ -175,11 +175,11 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
   updateTable = db.cursor()                        # used to update the calendar table
   classes = db.cursor(MySQLdb.cursors.DictCursor)  # used to interact with mau classes
   changedOrDeleted = db.cursor()                   # used to check if class schedule was fixed or really deleted
- 
+
   # class holiday calendars - since we aren't altering them use production accounts
-  if (mau == 'UAF'):
+  if (mau == 'uaf'):
     holidayCalId = 'alaska.edu_u58bomp32h9mcm146ganvl7n6g@group.calendar.google.com'
-  elif (mau =='UAA'):
+  elif (mau =='uaa'):
     holidayCalId = 'alaska.edu_e7q2937lv8vebkdfoanlrkgvag@group.calendar.google.com'
   else:
     holidayCalId = 'alaska.edu_aul04sss0ncbujpf3hto670sk0@group.calendar.google.com'
@@ -192,15 +192,11 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
   if DEBUG: print "  creating holiday calendar service"
 
   # set up a temporary service with production account for holiday calendars, maintaining duplicate calendars for
-  # holidays for each mau more trouble than it is worth - only do this if using TEST accounts
-  if (dbName == 'coursefinder_test'):
-    credentialsHC = TwoLeggedOAuthCredentials(OAUTH_CONSUMER_KEY, OAUTH_CONSUMER_SECRET, 'UA Course Calendar API')
-    credentialsHC.requestor = 'cal_admin001@alaska.edu'
-    adminAcctHC = "cal_admin001@alaska.edu"
-    (entry, serviceHC) = F.return_service(adminAcctHC, credentialsHC)
-  else:
-    serviceHC = service
-    entry = ""
+  # holidays for each mau more trouble than it is worth 
+  credentialsHC = TwoLeggedOAuthCredentials(OAUTH_CONSUMER_KEY, OAUTH_CONSUMER_SECRET, 'UA Course Calendar API')
+  credentialsHC.requestor = 'cal_admin001@alaska.edu'
+  adminAcctHC = "cal_admin001@alaska.edu"
+  (entry, serviceHC) = F.return_service(adminAcctHC, credentialsHC)
 
   if DEBUG: print "  created service entry = ", entry
   if (entry == ""):
@@ -208,12 +204,12 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
     (entry, holidayListing) = F.return_holidays(holidayCalId, serviceHC)
   else:
     print entry
-    logfile.write('%r\n' % (entry))
-    errorfile.write('%r\n' % (entry))
+    logfile.write("%s\n" % (entry))
+    errorfile.write("%s\n" % (entry))
     entry = "  Stopping mau = %s as holiday calendar cannot be queried because of problem listed above." % (mau)
     print entry
-    logfile.write('%r\n' % (entry))
-    errorfile.write('%r\n' % (entry))
+    logfile.write("%s\n" % (entry))
+    errorfile.write("%s\n" % (entry))
     sys.exit (1) 
  
   if DEBUG: print "  created holiday listing entry = %s for mau = %s" % (entry, mau)
@@ -226,15 +222,15 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
   ####################################################
   if DEBUG: print "  creating list of all %s courses" % mau
   majorAU={}
-  query="""SELECT crn, term, m.* FROM ssr2fcx_courses as c
-           LEFT JOIN ssr2fcx_meeting as m using (term, crn)
-           WHERE campusCode in
-                 (SELECT Code FROM camp_code WHERE University = '%s')
-           AND m.id is not NULL
-           AND
-           (m.meetStartDate > "20110101" AND m.meetEndDate> "20110101" AND m.startTime > "" AND m.endTime>""
-            AND (m.sunday>"" OR m.monday >"" OR m.tuesday>"" OR m.wednesday>""
-            OR m.thursday> "" OR m.friday > "" OR m.saturday >""))""" % mau
+  query="""select crn, term, m.* from ssr2fcx_courses as c
+           left join ssr2fcx_meeting as m using (term, crn)
+           where campusCode in
+                 (select Code from camp_code where University = '%s')
+           and m.id is not NULL
+           and
+           (m.meetStartDate > "20110101" and m.meetEndDate> "20110101" AND m.startTime > "" AND m.endTime>""
+            and (m.sunday>"" or m.monday >"" or m.tuesday>"" or m.wednesday>""
+            or m.thursday> "" or m.friday > "" or m.saturday >""))""" % mau
   courses = classes.execute(query)
   if DEBUG: print "  finished executing all %s courses query" % mau
 
@@ -288,7 +284,7 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
       elif (row["fromTable"] == "meetOld"):
         # occassionally (well more often than I like) they remove a meeting time, but the remaining meeting rows are exactly the same
         # so it looks like the class is deleted, but really it isn't.
-        query = "SELECT count(*) FROM ssr2fcx_courses WHERE term = %s AND crn=%s" % (row["term"], row["crn"])
+        query = "select count(*) from ssr2fcx_courses where term = %s and crn=%s" % (row["term"], row["crn"])
         for i in range(0,5):
           try:
             doubleCheckLines = changedOrDeleted.execute(query)
@@ -347,7 +343,7 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
         entry = "Calendar - item = %s, subject = %s, term = %s and crn = %s" % (item, subject, term, crn)
 
       print entry
-      logfile.write('%r\n' % (entry))
+      logfile.write("%s\n" % (entry))
 
       calKey = "%s-%s" % (term, crn)
 
@@ -368,8 +364,8 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
             subjectAcct = "VALID"
             entry = "Admin Account service creation failed 1, continuing"
             if(DEBUG): print entry
-            logfile.write('%r\n' % (entry))
-            errorfile.write('%r\n' % (entry))
+            logfile.write("%s\n" % (entry))
+            errorfile.write("%s\n" % (entry))
             continue
 
           subjectAcct = service_check(entry, adminAcctOwned, k)
@@ -377,13 +373,13 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
           if (subjectAcct == "continue"):
             entry = "service creation failed but not invalid, note and continue on"
             if (DEBUG): print entry
-            logfile.write('%r\n' % (entry)) 
+            logfile.write("%s\n" % (entry)) 
             subjectAcct = "VALID"
             continue
           elif (subjectAcct == "INVALID"):
             entry = "This subject account = %s is invalid, skip this account and try again with admin" % credentials.requestor
             if (DEBUG): print entry
-            logfile.write('%r\n' % (entry)) 
+            logfile.write("%s\n" % (entry)) 
             adminAcctOwned.append(k)
             continue
       else:
@@ -397,7 +393,7 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
             adminAcctOwned.append(k)
             entry = "Admin Account is listed as owner k = %r, calKey = %r" % (k, calKey)
             print entry
-            logfile.write('%r\n' % (entry))
+            logfile.write("%s\n" % (entry))
           continue
         elif (calKey in cals and cals[calKey]['owner'] != "None" and cals[calKey]['owner'] is not None and cals[calKey]['owner'] != ""):
           if (DEBUG): print "cals owner listed = %s" % cals[calKey]['owner']
@@ -455,7 +451,7 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
 
       entry = "  Service created if not new calendar, delete all events from k = %s" % (k)
       print entry
-      logfile.write('%r\n' % (entry))
+      logfile.write("%s\n" % (entry))
 
       ##################################################
       # if the item is in the marked for deletion list #
@@ -467,6 +463,7 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
         if (result == "exit"):
           nextSubject=nextSubject+1
           continue
+
         elif (result == "continue"):
           if (DEBUG): print "delete calendar - adminAcctOwned - continue"
           subjectAcct = "INVALID"
@@ -525,8 +522,8 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
           else: 
             entry = "ERROR changed calendars issue with credentials = %s, calkey = %s" % (credentials.requestor, calKey)
             if (DEBUG): print entry
-            logfile.write('%r\n' % (entry))
-            errorfile.write('%r\n' % (entry))
+            logfile.write("%s\n" % (entry))
+            errorfile.write("%s\n" % (entry))
           continue
 
         if (item == 'c-adminAcct'):
@@ -543,11 +540,11 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
         ##############################################################
         # make sure there is a StartTime - no StartTime, no calendar #
         ##############################################################
-        query = """SELECT sched.subjectCode, meet.subjCourseNumSeq, 
+        query = """Select sched.subjectCode, meet.subjCourseNumSeq, 
                    meet.meetStartDate, meet.meetEndDate, meet.startTime, meet.endTime, meet.bldg, meet.rm,
                    meet.sunday, meet.monday, meet.tuesday, meet.wednesday, meet.thursday, meet.friday, meet.saturday, meet.id as id, sched.id as schedId
-                   FROM ssr2fcx_meeting as meet, ssr2fcx_courses as sched
-                   WHERE meet.crn=%s AND meet.term=%s AND 
+                   From ssr2fcx_meeting as meet, ssr2fcx_courses as sched
+                   where meet.crn=%s AND meet.term=%s AND 
                    meet.startTime > '' AND meet.crn = sched.crn AND meet.term = sched.term""" % (crn, term)
         calInfo = "%s, %s" % (term, crn)
         for i in range(0,5):
@@ -574,7 +571,7 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
             # create the calendar
             entry = "  first meeting entry for k = %s, term = %s and crn = %s" % (k, term, crn)
             print entry
-            logfile.write('%r\n' % (entry))
+            logfile.write("%s\n" % (entry))
 
             title = "P-%s - %s" % (meetRow["subjCourseNumSeq"], term)
             summary = "CRN %s: This course calendar is for planning purposes only.  It is not maintained by the " % crn
@@ -619,9 +616,9 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
             #############################################################
             entry = "  Adding calendar information into database - begin"
             print entry
-            logfile.write('%r\n' % (entry))
+            logfile.write("%s\n" % (entry))
 
-            schedQuery = """SELECT courseStartDate, courseEndDate FROM ssr2fcx_courses WHERE crn= '%s' AND term = '%s'""" \
+            schedQuery = """select courseStartDate, courseEndDate from ssr2fcx_courses where crn= '%s' AND term = '%s'""" \
                          % (crn, term)
   
             # occassionally will lose connection to databse, so give it a try and re-connect if necessary
@@ -662,7 +659,7 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
 
               entry = "  Adding calendar information into database - end"
               print entry
-              logfile.write('%r\n' % (entry))
+              logfile.write("%s\n" % (entry))
 
               temp = "%s-%s" % (term, crn)
               if temp not in cals: cals[temp] = { 'calId': calId, 'owner': credentials.requestor }
@@ -718,7 +715,7 @@ def ind_maus(mau, dstLastYear, dstThisYear, dstNextYear, adminAcct, domain, cred
           updateTable.execute(uQuery)
           db.commit()
 
-          uQuery = """INSERT INTO meetOld SELECT * FROM ssr2fcx_meeting WHERE term = %s AND crn = %s""" % (term, crn)
+          uQuery = """insert into meetOld select * from ssr2fcx_meeting where term = %s and crn = %s""" % (term, crn)
           updateTable.execute(uQuery)
           db.commit()
           if (DEBUG): print "updated meetOld where term = %s and crn = %s""" % (term, crn)
@@ -771,6 +768,8 @@ if __name__ == '__main__':
   
   if (args.DEBUG == True):
     DEBUG = True
+  else:
+    DEBUG = False
 
   # setting up logging 
   try: 
@@ -806,7 +805,7 @@ if __name__ == '__main__':
     adminAcct = "cal_admin001@poc.alaska.edu"
 
   print entry
-  logfile.write('%r\n' % (entry))
+  logfile.write("%s" % (entry))
 
   #######################
   #                     #
@@ -884,7 +883,7 @@ if __name__ == '__main__':
   #########################################################
   if (DEBUG): print "  grabbing all existing calendars"
   cals={}
-  query="""SELECT crn, term, owner, calId FROM calendar"""
+  query="""select crn, term, owner, calId from calendar"""
   allCalendars = calendars.execute(query)
   if DEBUG: print "  finished executing all existing calendars query"
   
@@ -906,36 +905,36 @@ if __name__ == '__main__':
   table1 = "meetOld"
   table2 = "calendar"
   
-  query = """SELECT m.term, m.crn, m.subjCourseNumSeq, m.meetStartDate,
+  query = """select m.term, m.crn, m.subjCourseNumSeq, m.meetStartDate,
              m.meetEndDate, m.startTime, m.endTime, m.bldg,
              m.rm, m.sunday, m.monday, m.tuesday, m.wednesday,
              m.thursday, m.friday, m.saturday,
              "ssr2fcx_meeting" as fromTable
-             FROM ssr2fcx_meeting as m LEFT JOIN %s as t
-             USING (term, crn, subjCourseNumSeq, meetStartDate,
+             from ssr2fcx_meeting as m left join %s as t
+             using (term, crn, subjCourseNumSeq, meetStartDate,
                     meetEndDate, startTime, endTime, bldg, rm, sunday,
                     monday, tuesday, wednesday, thursday, friday,
                     saturday)
              WHERE t.id is NULL
              UNION
-             SELECT a.term, a.crn, a.subjCourseNumSeq, a.meetStartDate,
+             select a.term, a.crn, a.subjCourseNumSeq, a.meetStartDate,
              a.meetEndDate, a.startTime, a.endTime, a.bldg,
              a.rm, a.sunday, a.monday, a.tuesday, a.wednesday,
              a.thursday, a.friday, a.saturday, "meetOld" as fromTable
-             FROM %s as a LEFT JOIN ssr2fcx_meeting as b
-             USING (term, crn, subjCourseNumSeq, meetStartDate,
+             from %s as a left join ssr2fcx_meeting as b
+             using (term, crn, subjCourseNumSeq, meetStartDate,
                     meetEndDate, startTime, endTime, bldg, rm, sunday,
                     monday, tuesday, wednesday, thursday, friday,
                     saturday)
              WHERE b.id is NULL
              UNION
-             SELECT c.term, c.crn, c.subjCourseNumSeq, c.meetStartDate,
+             select c.term, c.crn, c.subjCourseNumSeq, c.meetStartDate,
              c.meetEndDate, c.startTime, c.endTime, c.bldg,
              c.rm, c.sunday, c.monday, c.tuesday, c.wednesday,
              c.thursday, c.friday, c.saturday, "calendar" as fromTable
-             FROM ssr2fcx_meeting as c LEFT JOIN %s as g
-             USING (term, crn)
-             WHERE g.id is NULL
+             from ssr2fcx_meeting as c left join %s as g
+             using (term, crn)
+             where g.id is NULL
              ORDER by term desc, crn, fromTable""" % (table1, table1, table2)
   
   alteredLines = diffRecords.execute(query)
@@ -943,7 +942,7 @@ if __name__ == '__main__':
   
   entry = "Records found: %d\n" % diffRecords.rowcount
   print entry
-  logfile.write('%r\n' % (entry))
+  logfile.write("%s\n" % (entry))
 
   diffRecords.close
   calendars.close
